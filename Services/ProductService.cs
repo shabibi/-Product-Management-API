@@ -17,9 +17,13 @@ namespace ProductManagementAPI.Services
             _productRepo.AddNewProduct(product);
         }
 
-        public IEnumerable<Product> GetAllProducts()
+        public IEnumerable<Product> GetAllProducts(int pageNumber, int pageSize)
         {
-            return _productRepo.GetAllProducts();
+            return _productRepo.GetAllProducts()
+                .OrderByDescending(p => p.DateAdded)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
         }
 
         public Product GetProductById(int id)

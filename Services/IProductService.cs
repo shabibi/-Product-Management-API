@@ -6,7 +6,7 @@ namespace ProductManagementAPI.Services
     {
         void AddNewProduct(Product product);
         void DeleteProduct(int id);
-        IEnumerable<Product> GetAllProducts();
+        IEnumerable<Product> GetAllProducts(int pageNumber, int pageSize);
         Product GetProductById(int id);
         void UpdateProduct(Product product);
     }
