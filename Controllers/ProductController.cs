@@ -110,5 +110,66 @@ namespace ProductManagementAPI.Controllers
 
             }
         }
+
+        [HttpPut("UpdateProduct/{productId}")]
+        public IActionResult UpdateProduct(int productId, InputDOT inputProduct )
+        {
+            
+            try
+            {
+                if (inputProduct == null)
+                    return BadRequest("Product data is required.");
+
+                var product = _productService.GetProductById(productId);
+                if(product == null)
+                    return NotFound($"Product with ID {productId} not found.");
+
+                product.PName = inputProduct.Name;
+                product.Price = inputProduct.Price;
+                product.Category = inputProduct.Category;
+                product.DateAdded = DateTime.Now;
+                _productService.UpdateProduct(product);
+
+                var updatedProduct = new OutputDTO
+                {
+                    PName = product.PName,
+                    Price = product.Price,
+                    Category = product.Category,
+                    DateAdded = product.DateAdded
+                };
+                return Ok(updatedProduct);
+            }
+            catch (Exception ex)
+            {
+                // Return a generic error response
+                return StatusCode(500, $"An error occurred while updte product. {(ex.Message)}");
+
+            }
+        }
+
+        [HttpDelete("DeleteProduct/{productId}")]
+        public IActionResult DeleteProduct(int productId)
+        {
+
+            try
+            {
+             
+                var product = _productService.GetProductById(productId);
+                if (product == null)
+                    return NotFound($"Product with ID {productId} not found.");
+
+                _productService.DeleteProduct(productId);
+
+                
+                return Ok($"Prduct whith productId {productId} Deleted ");
+            }
+            catch (Exception ex)
+            {
+                // Return a generic error response
+                return StatusCode(500, $"An error occurred while updte product. {(ex.Message)}");
+
+            }
+        }
+
     }
 }
