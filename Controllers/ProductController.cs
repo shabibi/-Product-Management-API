@@ -29,7 +29,8 @@ namespace ProductManagementAPI.Controllers
                 {
                     PName = productInput.Name,
                     Price = productInput.Price,
-                    Category = productInput.Category
+                    Category = productInput.Category,
+                    DateAdded = DateTime.UtcNow
                 };
 
                 // Add the new product to the database/service layer
@@ -41,7 +42,7 @@ namespace ProductManagementAPI.Controllers
                     PName = product.PName,
                     Price = product.Price,
                     Category = product.Category,
-                    DateAdded = DateTime.UtcNow
+                    DateAdded = product.DateAdded
                 };
                 return Ok(createdProduct);
             }
@@ -49,6 +50,31 @@ namespace ProductManagementAPI.Controllers
             {
                 // Return a generic error response
                 return StatusCode(500, $"An error occurred while adding the product. {ex.Message} ");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetAllProducts(int pageNumber = 1, int pageSize = 10)
+        {
+            try
+            {
+                var products = _productService.GetAllProducts(pageNumber,pageSize);
+                if (products == null || !products.Any())
+                {
+                    return NotFound("No products found.");
+                }
+                var outputProduct = new List<OutputDTO>();
+                foreach(var product in products)
+                {
+                    outputProduct.Add(new OutputDTO {PName= product.PName,Price = product.Price, Category = product.Category,DateAdded = product.DateAdded });
+                }
+                return Ok(outputProduct);
+            }
+            catch (Exception ex)
+            {
+                // Return a generic error response
+                return StatusCode(500, $"An error occurred while retrieving products. {(ex.Message)}");
+
             }
         }
     }
