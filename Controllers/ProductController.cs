@@ -30,12 +30,12 @@ namespace ProductManagementAPI.Controllers
                     PName = productInput.Name,
                     Price = productInput.Price,
                     Category = productInput.Category,
-                    DateAdded = DateTime.UtcNow
+                    DateAdded = DateTime.Now
                 };
 
                 // Add the new product to the database/service layer
                 _productService.AddNewProduct(product);
-
+                
                 // Map the created product to an OutputDTO to return a response to the client
                 var createdProduct = new OutputDTO
                 {
@@ -66,7 +66,13 @@ namespace ProductManagementAPI.Controllers
                 var outputProduct = new List<OutputDTO>();
                 foreach(var product in products)
                 {
-                    outputProduct.Add(new OutputDTO {PName= product.PName,Price = product.Price, Category = product.Category,DateAdded = product.DateAdded });
+                    outputProduct.Add(new OutputDTO
+                    {
+                        PName= product.PName,
+                        Price = product.Price,
+                        Category = product.Category,
+                        DateAdded = product.DateAdded
+                    });
                 }
                 return Ok(outputProduct);
             }
@@ -74,6 +80,33 @@ namespace ProductManagementAPI.Controllers
             {
                 // Return a generic error response
                 return StatusCode(500, $"An error occurred while retrieving products. {(ex.Message)}");
+
+            }
+        }
+
+        [HttpGet("GetProductByID/{ProductId}")]
+        public IActionResult GetProductById(int ProductId)
+        {
+            try
+            {
+                var product = _productService.GetProductById(ProductId);
+                if(product == null)
+                    return NotFound("No product found.");
+
+                var outputProduct = new OutputDTO
+                {
+                    PName = product.PName,
+                    Price = product.Price,
+                    Category = product.Category,
+                    DateAdded = product.DateAdded
+                };
+
+                return Ok(outputProduct);
+            }
+            catch (Exception ex)
+            {
+                // Return a generic error response
+                return StatusCode(500, $"An error occurred while retrieving product. {(ex.Message)}");
 
             }
         }
