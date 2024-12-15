@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProductManagementAPI.Models;
 using ProductManagementAPI.Services;
 
 namespace ProductManagementAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[Controller]")]
     public class ProductController : ControllerBase
@@ -53,6 +55,7 @@ namespace ProductManagementAPI.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetAllProducts(int pageNumber = 1, int pageSize = 10)
         {
@@ -84,6 +87,7 @@ namespace ProductManagementAPI.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetProductByID/{ProductId}")]
         public IActionResult GetProductById(int ProductId)
         {
